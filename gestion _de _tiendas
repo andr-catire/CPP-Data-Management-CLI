@@ -1,0 +1,721 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <cstdio>
+#include <cstdlib> 
+#include <cstring>
+using namespace std;
+
+
+/*"Ricardo HernÃ¡ndez C.I: 31.566.208"
+ "Andres Gonzales C.I: 31.745.166"*/
+struct producto {
+    int codigo;
+    char nombre[50];
+    char marca[50];
+    producto* prox;
+};
+
+struct tienda {
+    int codigo;
+    char nombre[50];
+    char direccion[100];
+    char telefono[20];
+    tienda* prox;
+};
+
+producto* lista_productos = NULL;
+
+tienda* lista_tiendas = NULL;
+
+producto* buscar_por_codigo(producto* lista, int codigo);
+void agregar_producto(producto*& lista);
+void cargar_productos(producto*& lista);
+void eliminar_producto(producto*& lista);
+void guardar_productos(producto* lista);
+void mostrar_productos(producto* lista);
+void consultar_por_codigo(producto* lista);
+void consultar_por_nombre(producto* lista);
+void modificar_nombre(producto* lista);
+void modificar_marca(producto* lista);
+
+void agregar_tienda(tienda*& lista);
+void consultar_tienda(tienda* lista);
+void eliminar_tienda(tienda*& lista);
+void mostrar_todas_las_tiendas(tienda* lista);
+void guardar_tiendas(tienda* lista);
+void modificar_tienda(tienda* lista);
+void cargar_tiendas(tienda*& lista);
+
+int main() {
+    int op = -1;
+    char temp_buffer[2];
+
+    cargar_productos(lista_productos);
+
+    while (op != 0) {
+        cout << "----------------------------------" << endl;
+        cout << "        SISTEMA INVENTARIO        " << endl;
+        cout << "----------------------------------" << endl;
+        cout << "         Realizado por:          " << endl;
+        cout << "Ricardo HernÃ¡ndez C.I: 31.566.208" << endl;
+        cout << "Andres Gonzales C.I: 31.745.166" << endl;
+        cout << "                                 " << endl;
+        cout << "         MENÃš PRINCIPAL        " << endl;
+        cout << "                                 " << endl;
+        cout << "      1. MANTENIMIENTO" << endl;
+        cout << "      2. ACTUALIZACIÃ“N DE INVENTARIO" << endl;
+        cout << "      3. VENTAS" << endl;
+        cout << "                                 " << endl;
+        cout << "      0. Salir\n" << endl;
+        cout << "                                 " << endl;
+        cout << "          Su opciÃ³n: " << endl;
+        cout << "----------------------------------" << endl;
+
+        if (!(cin >> op)) {
+            cin.clear();
+            fgets(temp_buffer, 2, stdin);
+            op = -1;
+            continue;
+        }
+        fgets(temp_buffer, 2, stdin);
+
+        switch (op) {
+        case 1: {
+            int op2 = -1;
+            cout << "--------------------------------------" << endl;
+            cout << "          SISTEMA INVENTARIO          " << endl;
+            cout << "--------------------------------------" << endl;
+            cout << "      1. MANTENIMIENTO TIENDAS" << endl;
+            cout << "      2. MANTENIMIENTO PRODUCTOS" << endl;
+            cout << "                                 " << endl;
+            cout << "      0. Volver al Menu Principal" << endl;
+            cout << "                                 " << endl;
+            cout << "          Su opciÃ³n: " << endl;
+            cout << "--------------------------------------" << endl;
+
+            if (!(cin >> op2)) {
+                cin.clear();
+                fgets(temp_buffer, 2, stdin);
+                op2 = -1;
+                continue;
+            }
+            fgets(temp_buffer, 2, stdin);
+
+            switch (op2) {
+            case 1: {
+                int op4 = -1;
+                cout << "--------------------------------------" << endl;
+                cout << "          SISTEMA INVENTARIO          " << endl;
+                cout << "--------------------------------------" << endl;
+                cout << "         MANTENIMIENTO TIENDAS        " << endl;
+                cout << "--------------------------------------" << endl;
+                cout << "        1. AGREGAR" << endl;
+                cout << "        2. CONSULTAR" << endl;
+                cout << "        3. MODIFICAR" << endl;
+                cout << "        4. ELIMINAR" << endl;
+                cout << "        5. MOSTRAR TODAS LAS TIENDAS" << endl;
+                cout << "                                 " << endl;
+                cout << "        0. Salir\n" << endl;
+                cout << "                                 " << endl;
+                cout << "           Su opciÃ³n: " << endl;
+                cout << "--------------------------------------" << endl;
+
+                if (!(cin >> op4)) {
+                    cin.clear();
+                    fgets(temp_buffer, 2, stdin);
+                    op4 = -1;
+                    continue;
+                }
+                fgets(temp_buffer, 2, stdin);
+
+                switch (op4) {
+                case 1:
+                    agregar_tienda(lista_tiendas);
+                    guardar_tiendas(lista_tiendas);
+                    break;
+                case 2:
+                    consultar_tienda(lista_tiendas);
+                    break;
+                case 3:
+                    modificar_tienda(lista_tiendas);
+                    break;
+                case 4:
+                    eliminar_tienda(lista_tiendas);
+                    break;
+                case 5:
+                    mostrar_todas_las_tiendas(lista_tiendas);
+                    break;
+                case 0:
+                    cout << "\nVolviendo..." << endl;
+                    break;
+                default:
+                    cout << "\nOpcion invalida." << endl;
+                    break;
+                }
+                break;
+            }
+            case 2: {
+                int op3 = -1;
+                cout << "--------------------------------------" << endl;
+                cout << "          SISTEMA INVENTARIO          " << endl;
+                cout << "--------------------------------------" << endl;
+                cout << "        MANTENIMIENTO PRODUCTOS       " << endl;
+                cout << "--------------------------------------" << endl;
+                cout << "        1. AGREGAR" << endl;
+                cout << "        2. CONSULTAR POR CÃ“DIGO" << endl;
+                cout << "        3. CONSULTAR POR NOMBRE" << endl;
+                cout << "        4. MODIFICAR NOMBRE" << endl;
+                cout << "        5. MODIFICAR MARCA" << endl;
+                cout << "        6. ELIMINAR" << endl;
+                cout << "        7. MOSTRAR TODOS LOS PRODUCTOS" << endl;
+                cout << "--------------------------------------" << endl;
+                cout << "        0. Salir\n" << endl;
+                cout << "           Su opciÃ³n: " << endl;
+                cout << "--------------------------------------" << endl;
+
+                if (!(cin >> op3)) {
+                    cin.clear();
+                    fgets(temp_buffer, 2, stdin);
+                    op3 = -1;
+                    continue;
+                }
+                fgets(temp_buffer, 2, stdin);
+
+                switch (op3) {
+                case 1:
+                    agregar_producto(lista_productos);
+                    guardar_productos(lista_productos);
+                    break;
+                case 2:
+                    consultar_por_codigo(lista_productos);
+                    break;
+                case 3:
+                    consultar_por_nombre(lista_productos);
+                    break;
+                case 4:
+                    modificar_nombre(lista_productos);
+                    break;
+                case 5:
+                    modificar_marca(lista_productos);
+                    break;
+                case 6:
+                    eliminar_producto(lista_productos);
+                    break;
+                case 7:
+                    mostrar_productos(lista_productos);
+                    break;
+                case 0:
+                    std::cout << "\nVolviendo..." << std::endl;
+                    break;
+                default:
+                    std::cout << "\nOpcion invalida." << std::endl;
+                    break;
+                }
+                break;
+            }
+
+            case 0:
+                cout << "\nVolviendo al Menu Principal..." << endl;
+                break;
+            default:
+                cout << "\nOpcion invalida." << endl;
+                break;
+            }
+            break;
+        }
+
+        case 2:
+            cout << "------ Actualizacion de Inventario ------" << endl;
+            cout << "(MÃ³dulo en desarrollo)" << endl;
+            break;
+
+        case 3:
+            cout << "------ Ventas ------" << endl;
+            cout << "(MÃ³dulo en desarrollo)" << endl;
+            break;
+
+        case 0:
+            cout << "\nGuardando todos los datos..." << endl;
+            guardar_productos(lista_productos);
+            cout << "Â¡Adios!" << endl;
+            break;
+
+        default:
+            cout << "\nOpciÃ³n invÃ¡lida. Intente de nuevo." << endl;
+            break;
+        }
+    }
+
+    return 0;
+}
+
+producto* buscar_por_codigo(producto* lista, int codigo) {
+    producto* Ax = lista;
+    while (Ax != NULL) {
+        if (Ax->codigo == codigo) {
+            return Ax;
+        }
+        Ax = Ax->prox;
+    }
+    return NULL;
+}
+
+tienda* buscar_tienda(tienda* lista, int codigo) {
+    tienda* Ax = lista;
+    while (Ax != NULL) {
+        if (Ax->codigo == codigo) {
+            return Ax;
+        }
+        Ax = Ax->prox;
+    }
+    return NULL;
+}
+
+void agregar_tienda(tienda*& lista) {
+    char S_codigo[10];
+    int codigo;
+    char telefono[20];
+    char nombre[50];
+    char direccion[100];
+
+    cout << "\n--- Agregar Tienda ---\n";
+    cout << "Coloque el codigo Ãºnico de la tienda (solo nÃºmeros): "; fgets(S_codigo, 10, stdin);
+    S_codigo[strcspn(S_codigo, "\n")] = 0;
+    codigo = atoi(S_codigo);
+
+    if (buscar_tienda(lista, codigo) != NULL) {
+        cout << "ERROR: El codigo " << codigo << "Ya estÃ¡ en uso" << endl;
+    }
+    else {
+        cout << "Nombre de la tienda:"; fgets(nombre, 50, stdin);
+        nombre[strcspn(nombre, "\n")] = 0;
+
+        cout << "Direccion de la tienda: "; fgets(direccion, 100, stdin);
+        direccion[strcspn(direccion, "\n")] = 0;
+
+        cout << "Telefono de la tienda: "; fgets(telefono, 20, stdin);
+        telefono[strcspn(telefono, "\n")] = 0;
+
+        tienda* t = new tienda;
+        t->codigo = codigo;
+        strcpy_s(t->nombre, sizeof(t->nombre), nombre);
+        strcpy_s(t->direccion, sizeof(t->direccion), direccion);
+        strcpy_s(t->telefono, sizeof(t->telefono), telefono);
+
+        t->prox = lista;
+        lista = t;
+
+        cout << "Tienda agregada exitosamente, los datos son:" << t->codigo << "-" << t->nombre << "\n";
+    }
+}
+
+void cargar_tiendas(tienda*& lista) {
+    FILE* archivo = NULL;
+    errno_t err = fopen_s(&archivo, "tiendas.dat", "r");
+    tienda* ultimo = NULL;
+    lista = NULL;
+
+    if (err != 0 || archivo == NULL) {
+        cout << "Aviso: 'tiendas.dat' no encontrado. Empezando lista vacia." << endl;
+        return;
+    }
+
+    char linea[256];
+    while (fgets(linea, sizeof(linea), archivo)) {
+        linea[strcspn(linea, "\n")] = '\0';
+        char* context = NULL;
+        char* S_codigo = strtok_s(linea, ";", &context);
+        char* nombre = strtok_s(NULL, ";", &context);
+        char* direccion = strtok_s(NULL, ";", &context);
+        char* telefono = strtok_s(NULL, ";", &context);
+
+        if (S_codigo == NULL || nombre == NULL || direccion == NULL || telefono == NULL) {
+            continue;
+        }
+
+        tienda* p = new tienda;
+        p->codigo = atoi(S_codigo);
+        strcpy_s(p->nombre, sizeof(p->nombre), nombre);
+        strcpy_s(p->direccion, sizeof(p->direccion), direccion);
+        strcpy_s(p->telefono, sizeof(p->telefono), telefono);
+        p->prox = NULL;
+
+        if (lista == NULL) {
+            lista = p;
+            ultimo = p;
+        }
+        else {
+            ultimo->prox = p;
+            ultimo = p;
+        }
+    }
+    fclose(archivo);
+    cout << "Datos cargados desde tiendas.dat\n";
+}
+
+void guardar_tiendas(tienda* lista) {
+    FILE* archivo = NULL;
+    errno_t err = fopen_s(&archivo, "tiendas.dat", "w");
+    if (err != 0 || archivo == NULL) {
+        cout << "Error fatal: No se pudo escribir en tiendas.dat" << endl;
+        return;
+    }
+
+    tienda* Ax = lista;
+    while (Ax != NULL) {
+        fprintf(archivo, "%d;%s;%s;%s\n", Ax->codigo, Ax->nombre, Ax->direccion, Ax->telefono);
+        Ax = Ax->prox;
+    };
+    fclose(archivo);
+    cout << "Datos guardados en tiendas.dat\n";
+}
+
+void consultar_tienda(tienda* lista) {
+    int codigo;
+    char S_cod[10];
+
+    cout << "Ingrese el codigo a buscar: ";
+    fgets(S_cod, 10, stdin);
+    S_cod[strcspn(S_cod, "\n")] = 0;
+    codigo = atoi(S_cod);
+
+    tienda* encontrado = buscar_tienda(lista, codigo);
+    if (encontrado != NULL) {
+        cout << "Encontrado: " << encontrado->nombre << endl;
+        cout << "Codigo: " << encontrado->codigo << endl;
+        cout << "telefono: " << encontrado->telefono << endl;
+        cout << "direccion: " << encontrado->direccion << endl;
+    }
+    else {
+        cout << "Tienda no encontrada." << endl;
+    }
+}
+
+void mostrar_todas_las_tiendas(tienda* lista) {
+    cout << "\n----Inventario total de tiendas----\n";
+    tienda* Ax = lista;
+
+    if (Ax == NULL) {
+        cout << "(La lista estÃ¡ vacÃ­a)" << endl;
+    }
+    while (Ax != NULL) {
+        cout << "-----------------------" << endl;
+        cout << "Codigo:     " << Ax->codigo << endl;
+        cout << "Nombre:     " << Ax->nombre << endl;
+        cout << "Direccion:      " << Ax->direccion << endl;
+        cout << "Telefono:      " << Ax->telefono << endl;
+        Ax = Ax->prox;
+    }
+    cout << "-----------------------" << endl;
+    cout << "\n----Fin Lista----\n";
+}
+
+void mostrar_productos(producto* lista) {
+    cout << "\n----Inventario total de productos----\n";
+    producto* Ax = lista;
+
+    if (Ax == NULL) {
+        cout << "(La lista estÃ¡ vacÃ­a)" << endl;
+    }
+    while (Ax != NULL) {
+        cout << "-----------------------" << endl;
+        cout << "Codigo:     " << Ax->codigo << endl;
+        cout << "Nombre:     " << Ax->nombre << endl;
+        cout << "Marca:      " << Ax->marca << endl;
+        Ax = Ax->prox;
+    }
+    cout << "-----------------------" << endl;
+    cout << "\n----Fin Lista----\n";
+}
+
+void modificar_tienda(tienda* lista) {
+    int codigo;
+    char nombre[50];
+    char direccion[100];
+    char telefono[20];
+    char S_codigo[10];
+
+    cout << "\n--- Modificar la tienda ---\n";
+    cout << "Ingrese el codigo de la tienda: "; fgets(S_codigo, 10, stdin);
+    S_codigo[strcspn(S_codigo, "\n")] = 0;
+    codigo = atoi(S_codigo);
+
+    tienda* tienda_a_modificar = buscar_tienda(lista, codigo);
+
+    if (tienda_a_modificar) {
+        cout << "El nombre actual es: " << tienda_a_modificar->nombre << endl;
+        cout << "El nuevo nombre de la tienda es: "; fgets(nombre, 50, stdin);
+        nombre[strcspn(nombre, "\n")] = 0;
+
+        cout << "La direccion actual es: " << tienda_a_modificar->direccion << endl;
+        cout << "La nueva direccion de la tienda es: "; fgets(direccion, 100, stdin);
+        direccion[strcspn(direccion, "\n")] = 0;
+
+        cout << "El telefono actual es: " << tienda_a_modificar->telefono << endl;
+        cout << "El nuevo telefono de la tienda es: "; fgets(telefono, 20, stdin);
+        telefono[strcspn(telefono, "\n")] = 0;
+
+
+        strcpy_s(tienda_a_modificar->nombre, sizeof(tienda_a_modificar->nombre), nombre);
+        strcpy_s(tienda_a_modificar->direccion, sizeof(tienda_a_modificar->direccion), direccion);
+        strcpy_s(tienda_a_modificar->telefono, sizeof(tienda_a_modificar->telefono), telefono);
+        cout << "Nombre de la tienda (" << codigo << ") cambiado exitosamente.\n";
+        cout << "Direccion de la tienda (" << codigo << ") cambiado exitosamente. \n";
+        cout << "Telefono de la tienda (" << codigo << ") cambiado exitosamente. \n";
+    }
+    else {
+        cout << "Error: Tienda con codigo " << codigo << " no encontrado.\n";
+    }
+}
+
+void agregar_producto(producto*& lista) {
+    char S_codigo[10];
+    int codigo;
+    char nombre[50];
+    char marca[50];
+
+    cout << "\n--- Agregar Producto ---\n";
+    cout << "Coloque el codigo del producto (solo numeros): "; fgets(S_codigo, 10, stdin);
+    S_codigo[strcspn(S_codigo, "\n")] = 0;
+    codigo = atoi(S_codigo);
+
+    if (buscar_por_codigo(lista, codigo) != NULL) {
+        cout << "Error: El codigo " << codigo << " ya esta en uso.\n";
+    }
+    else {
+        cout << "Nombre del producto: "; fgets(nombre, 50, stdin);
+        nombre[strcspn(nombre, "\n")] = 0;
+
+        cout << "Marca del producto: "; fgets(marca, 50, stdin);
+        marca[strcspn(marca, "\n")] = 0;
+
+        producto* p = new producto;
+        p->codigo = codigo;
+        strcpy_s(p->nombre, sizeof(p->nombre), nombre);
+        strcpy_s(p->marca, sizeof(p->marca), marca);
+
+        p->prox = lista;
+        lista = p;
+
+        cout << "Producto agregado: " << p->codigo << " " << p->nombre << "\n";
+    }
+}
+
+void cargar_productos(producto*& lista) {
+    FILE* archivo = NULL;
+    errno_t err = fopen_s(&archivo, "productos.dat", "r");
+    producto* ultimo = NULL;
+    lista = NULL;
+
+    if (err != 0 || archivo == NULL) {
+        cout << "Aviso: 'productos.dat' no encontrado. Empezando lista vacia." << endl;
+        return;
+    }
+
+    char linea[256];
+    while (fgets(linea, sizeof(linea), archivo)) {
+        linea[strcspn(linea, "\n")] = '\0';
+        char* context = NULL;
+        char* S_codigo = strtok_s(linea, ";", &context);
+        char* nombre = strtok_s(NULL, ";", &context);
+        char* marca = strtok_s(NULL, ";", &context);
+
+        if (S_codigo == NULL || nombre == NULL || marca == NULL) {
+            continue;
+        }
+
+        producto* p = new producto;
+        p->codigo = atoi(S_codigo);
+        strcpy_s(p->nombre, sizeof(p->nombre), nombre);
+        strcpy_s(p->marca, sizeof(p->marca), marca);
+        p->prox = NULL;
+
+        if (lista == NULL) {
+            lista = p;
+            ultimo = p;
+        }
+        else {
+            ultimo->prox = p;
+            ultimo = p;
+        }
+    }
+    fclose(archivo);
+    cout << "Datos cargados desde productos.dat\n";
+}
+
+void guardar_productos(producto* lista) {
+    FILE* archivo = NULL;
+    errno_t err = fopen_s(&archivo, "productos.dat", "w");
+    if (err != 0 || archivo == NULL) {
+        cout << "Error fatal: No se pudo escribir en productos.dat" << endl;
+        return;
+    }
+
+    producto* Ax = lista;
+    while (Ax != NULL) {
+        fprintf(archivo, "%d;%s;%s\n", Ax->codigo, Ax->nombre, Ax->marca);
+        Ax = Ax->prox;
+    };
+    fclose(archivo);
+    cout << "Datos guardados en productos.dat\n";
+}
+
+void eliminar_producto(producto*& lista) {
+    int codigo;
+    char codigo_caracter[10];
+    cout << "\n--- Eliminar Producto ---\n";
+    cout << "Ingrese el codigo del producto: ";
+
+    if (fgets(codigo_caracter, 10, stdin) == NULL) return;
+    codigo_caracter[strcspn(codigo_caracter, "\n")] = 0;
+    codigo = atoi(codigo_caracter);
+    if (!buscar_por_codigo(lista, codigo)) {
+        cout << "Error: Producto con codigo " << codigo << " no encontrado. \n";
+        return;
+    }
+    producto* actual = lista;
+    producto* anterior = NULL;
+    while (actual != NULL && actual->codigo != codigo) {
+        anterior = actual;
+        actual = actual->prox;
+    }
+
+    if (actual == NULL) {
+        cout << "Error inesperado: elemento no encontrado durante la eliminaciÃ³n.\n";
+        return;
+    }
+    if (anterior == NULL) {
+        lista = actual->prox;
+    }
+    else {
+        anterior->prox = actual->prox;
+    }
+    cout << "Producto con codigo " << codigo << " eliminado exitosamente.\n";
+    delete actual;
+}
+
+void eliminar_tienda(tienda*& lista) {
+    int codigo;
+    char codigo_caracter[10];
+    cout << "\n--- Eliminar Tienda ---\n";
+    cout << "Ingrese el codigo del tienda: ";
+
+    if (fgets(codigo_caracter, 10, stdin) == NULL) return;
+    codigo_caracter[strcspn(codigo_caracter, "\n")] = 0;
+    codigo = atoi(codigo_caracter);
+    if (!buscar_tienda(lista, codigo)) {
+        cout << "Error: Tienda con codigo " << codigo << " no encontrado. \n";
+        return;
+    }
+    tienda* actual = lista;
+    tienda* anterior = NULL;
+    while (actual != NULL && actual->codigo != codigo) {
+        anterior = actual;
+        actual = actual->prox;
+    }
+
+    if (actual == NULL) {
+        cout << "Error inesperado: elemento no encontrado durante la eliminaciÃ³n.\n";
+        return;
+    }
+    if (anterior == NULL) {
+        lista = actual->prox;
+    }
+    else {
+        anterior->prox = actual->prox;
+    }
+    cout << "Tienda con codigo " << codigo << " eliminado exitosamente.\n";
+    delete actual;
+}
+
+void consultar_por_codigo(producto* lista) {
+    int cod;
+    char S_cod[10];
+
+    cout << "Ingrese codigo a buscar: ";
+    fgets(S_cod, 10, stdin);
+    S_cod[strcspn(S_cod, "\n")] = 0;
+    cod = atoi(S_cod);
+
+    producto* encontrado = buscar_por_codigo(lista, cod);
+    if (encontrado != NULL) {
+        cout << "Encontrado: " << encontrado->nombre << endl;
+        cout << "Codigo: " << encontrado->codigo << endl;
+        cout << "Marca: " << encontrado->marca << endl;
+    }
+    else {
+        cout << "Producto no encontrado." << endl;
+    }
+}
+
+void consultar_por_nombre(producto* lista) {
+    char nombre[50];
+    producto* Ax = lista;
+
+    cout << "\n--- Consultar por Nombre ---\n";
+    cout << "Indique el nombre del producto: " << endl; fgets(nombre, 50, stdin);
+    nombre[strcspn(nombre, "\n")] = 0;
+
+    bool encontrado = false;
+    cout << "\n--- Resultados para \"" << nombre << "\" ---\n";
+    while (Ax != NULL) {
+        if (strcmp(Ax->nombre, nombre) == 0) {
+            cout << "Encontrado - Codigo: " << Ax->codigo << ", Marca: " << Ax->marca << endl;
+            encontrado = true;
+        }
+        Ax = Ax->prox;
+    }
+    if (!encontrado) {
+        cout << "El producto \"" << nombre << "\" no se encuentra en la lista." << std::endl;
+    }
+}
+
+void modificar_nombre(producto* lista) {
+    int codigo;
+    char nombre[50];
+    char S_codigo[10];
+
+    cout << "\n--- Modificar Nombre ---\n";
+    cout << "Ingrese el codigo del producto: "; fgets(S_codigo, 10, stdin);
+    S_codigo[strcspn(S_codigo, "\n")] = 0;
+    codigo = atoi(S_codigo);
+
+    producto* prod_a_modificar = buscar_por_codigo(lista, codigo);
+
+    if (prod_a_modificar) {
+        cout << "El nombre actual es: " << prod_a_modificar->nombre << endl;
+        cout << "Nuevo nombre del producto: "; fgets(nombre, 50, stdin);
+        nombre[strcspn(nombre, "\n")] = 0;
+
+        strcpy_s(prod_a_modificar->nombre, sizeof(prod_a_modificar->nombre), nombre);
+        cout << "Nombre del producto (" << codigo << ") cambiado exitosamente.\n";
+    }
+    else {
+        cout << "Error: Producto con codigo " << codigo << " no encontrado.\n";
+    }
+}
+
+void modificar_marca(producto* lista) {
+    int codigo;
+    char marca[50];
+    char S_codigo[10];
+
+    cout << "\n--- Modificar Marca ---\n";
+    cout << "Ingrese el codigo del producto: "; fgets(S_codigo, 10, stdin);
+    S_codigo[strcspn(S_codigo, "\n")] = 0;
+    codigo = atoi(S_codigo);
+
+    producto* prod_a_modificar = buscar_por_codigo(lista, codigo);
+
+    if (prod_a_modificar != NULL) {
+        cout << "La marca actual del producto es: " << prod_a_modificar->marca << endl;
+        cout << "Nuevo nombre de la marca: "; fgets(marca, 50, stdin);
+        marca[strcspn(marca, "\n")] = 0;
+
+        strcpy_s(prod_a_modificar->marca, sizeof(prod_a_modificar->marca), marca);
+        cout << "Marca del producto (" << codigo << ") cambiado exitosamente.\n";
+    }
+    else {
+        cout << "Error: Producto con codigo " << codigo << " no encontrado.\n";
+    }
+}
